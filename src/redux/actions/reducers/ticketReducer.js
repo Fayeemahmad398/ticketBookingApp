@@ -25,7 +25,6 @@ function ticketReducer(state = initial_State, action) {
         state.totalTickets,
         action.payload
       );
-
       return {
         ...state,
         totalTickets: remainingTickets,
@@ -40,8 +39,8 @@ function ticketReducer(state = initial_State, action) {
 function checkAvailability(data, requirement) {
   let remainingTickets = data.filter((ticket) => {
     if (
-      ticket.destination == requirement.to &&
-      ticket.source == requirement.from
+      ticket.destination == requirement.destination &&
+      ticket.source == requirement.source
     ) {
       return true;
     } else {

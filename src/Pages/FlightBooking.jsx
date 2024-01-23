@@ -11,7 +11,10 @@ function FlightBooking() {
   const dispatch = useDispatch();
 
   function handleConfirm() {
-    dispatch(actionToCnfTkts(JSON.parse(localStorage.getItem("selectedTckt"))));
+    const selectedTckt = JSON.parse(localStorage.getItem("selectedTckt"));
+    const preparedtckt = { ...selectedTckt, ...cnfInfo };
+    console.log(preparedtckt)
+    dispatch(actionToCnfTkts(preparedtckt));
     localStorage.removeItem("selectedTckt");
     setCnfInfo({});
     navigate("/confirmation");

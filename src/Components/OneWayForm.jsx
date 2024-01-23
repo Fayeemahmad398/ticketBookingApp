@@ -1,29 +1,51 @@
-import { Box, Button, TextField } from "@mui/material";
+/* eslint-disable react/prop-types */
+/* eslint-disable react/jsx-key */
+import {
+  Box,
+  Button,
+  FormControl,
+  InputLabel,
+  MenuItem,
+  Select,
+  TextField,
+} from "@mui/material";
 import { tickets } from "../utils/tickets";
 import { useState } from "react";
 import { toast } from "react-toastify";
-import { useDispatch } from "react-redux";
+import { useDispatch, useSelector } from "react-redux";
 import { actionToSearchTicket } from "../redux/actions/actionsCreators";
-function OneWayForm() {
-  const [oneWayInfo, setOnewayInfo] = useState({ direct: true });
-
+import { useNavigate } from "react-router-dom";
+function OneWayForm({ value }) {
+  const [oneWayInfo, setOnewayInfo] = useState({
+    direct: value == 0 ? true : false,
+  });
+  const navigate = useNavigate();
   const dispatch = useDispatch();
 
   function handleOnewWayDetails(e, key) {
     oneWayInfo[key] = e.target.value;
-    setOnewayInfo({ ...oneWayInfo });
+    setOnewayInfo({ ...oneWayInfo, direct: value == 0 ? true : false });
   }
 
   function isReadyToSearchTicket() {
-    if (oneWayInfo.from == oneWayInfo.to) {
+    if (oneWayInfo.source == oneWayInfo.destination) {
       toast.warn("Source and Destination cannot be same");
       return;
     }
     dispatch(actionToSearchTicket(oneWayInfo));
-    setOnewayInfo({ direct: true });
+    setOnewayInfo({ direct: value == 0 ? true : false });
   }
 
-  console.log(oneWayInfo);
+  function handleBuyTicket(tckt) {
+    localStorage.setItem("selectedTckt", JSON.stringify(tckt));
+    navigate("/flight-booking");
+  }
+
+  const tktsForYou = useSelector((store) => {
+    return store.ticketReducer.tktsForYou;
+  });
+  console.log(tktsForYou);
+
   return (
     <div>
       <Box
@@ -32,49 +54,90 @@ function OneWayForm() {
         maxWidth={"250px"}
         gap={"20px"}
       >
-        <TextField
-          id="standard-select-currency-native"
-          select
-          SelectProps={{
-            native: true,
-          }}
-          onChange={(e) => handleOnewWayDetails(e, "from")}
-        >
-          {tickets.map((ticket) => (
-            <option key={ticket.source} value={ticket.source}>
-              {ticket.source}
-            </option>
-          ))}
-        </TextField>
-        <TextField
-          id="standard-select-currency-native"
-          select
-          SelectProps={{
-            native: true,
-          }}
-          onChange={(e) => handleOnewWayDetails(e, "to")}
-        >
-          {tickets.map((ticket) => (
-            <option key={ticket.source} value={ticket.source}>
-              {ticket.source}
-            </option>
-          ))}
-        </TextField>
+        <FormControl>
+          <InputLabel id="demo-simple-select-autowidth-label">
+            source city
+          </InputLabel>
+          <Select
+            label="Choose city"
+            labelId="demo-simple-select-autowidth-label"
+            id="demo-simple-select-autowidth"
+            onChange={(e) => handleOnewWayDetails(e, "source")}
+            autoWidth
+          >
+            {tickets.map((tckt) => {
+              return <MenuItem value={tckt.source}>{tckt?.source}</MenuItem>;
+            })}
+          </Select>
+        </FormControl>
+        <FormControl>
+          <InputLabel id="demo-simple-select-autowidth-label">
+            Destination city
+          </InputLabel>
+          <Select
+            label="Destination city"
+            labelId="demo-simple-select-autowidth-label"
+            id="demo-simple-select-autowidth"
+            onChange={(e) => handleOnewWayDetails(e, "destination")}
+            autoWidth
+          >
+            {tickets.map((tckt) => {
+              return (
+                <MenuItem value={tckt.destination}>{tckt.destination}</MenuItem>
+              );
+            })}
+          </Select>
+        </FormControl>
         <TextField
           id="outlined-basic"
           variant="outlined"
           type="date"
           onChange={(e) => handleOnewWayDetails(e, "date")}
         />
+
+        {value == 1 && (
+          <TextField
+            id="outlined-basic"
+            variant="outlined"
+            type="date"
+            placeholder="Date"
+            onChange={(e) => handleOnewWayDetails(e, "Journeydate")}
+          />
+        )}
+
         <Button
           variant="outlined"
-          disabled={!oneWayInfo?.from || !oneWayInfo?.to || !oneWayInfo?.date}
+          disabled={
+            !oneWayInfo?.source || !oneWayInfo?.destination || !oneWayInfo?.date
+          }
           style={{ maxWidth: "150px" }}
           onClick={isReadyToSearchTicket}
         >
           SEARCH FLIGHT
         </Button>
       </Box>
+
+      <div>
+        {tktsForYou.map((tckt) => {
+          return (
+            <div className="card w-75 mt-3">
+              <div className="card-body">
+                <p className="card-text">{tckt.source}</p>
+                <p className="card-text">{tckt.destination}</p>
+                <p className="card-text">
+                  {tckt?.direct ? "direct oneway" : "stops"}
+                </p>
+                <button onClick={() => handleBuyTicket(tckt)}>
+                  Rs.{tckt.price}
+                </button>
+              </div>
+            </div>
+          );
+        })}
+        {tktsForYou?.length == 0 && (
+          <h6>No tickets available for this route ,change the route</h6>
+        )}
+      </div>
     </div>
   );
 }
