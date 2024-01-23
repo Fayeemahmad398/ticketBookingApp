@@ -24,7 +24,11 @@ function OneWayForm({ value }) {
 
   function handleOnewWayDetails(e, key) {
     oneWayInfo[key] = e.target.value;
-    setOnewayInfo({ ...oneWayInfo, direct: value == 0 ? true : false });
+    setOnewayInfo({
+      ...oneWayInfo,
+      direct: value == 0 ? true : false,
+      searching: true,
+    });
   }
 
   function isReadyToSearchTicket() {
@@ -38,6 +42,8 @@ function OneWayForm({ value }) {
 
   function handleBuyTicket(tckt) {
     localStorage.setItem("selectedTckt", JSON.stringify(tckt));
+    dispatch(actionToSearchTicket({}));
+
     navigate("/flight-booking");
   }
 
@@ -118,6 +124,7 @@ function OneWayForm({ value }) {
       </Box>
 
       <div>
+        {console.log(oneWayInfo)}
         {tktsForYou.map((tckt) => {
           return (
             <div className="card w-75 mt-3">

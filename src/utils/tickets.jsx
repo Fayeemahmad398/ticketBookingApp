@@ -11,6 +11,7 @@ export const tickets = [
     price: 5000,
     date: "2024-02-15",
   },
+
   {
     id: 2,
     source: "Mumbai",
@@ -58,5 +59,17 @@ export const tickets = [
     company: "GoAir",
     price: 5500,
     date: "2024-02-25",
+  },
+  {
+    id: 6,
+    source: "Delhi",
+    destination: "Mumbai",
+    direct: false,
+    stops: 0,
+    from: "08:00 AM",
+    to: "10:00 AM",
+    company: "Air India",
+    price: 5000,
+    date: "2024-02-15",
   },
 ];

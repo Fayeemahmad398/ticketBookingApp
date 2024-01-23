@@ -39,8 +39,9 @@ function ticketReducer(state = initial_State, action) {
 function checkAvailability(data, requirement) {
   let remainingTickets = data.filter((ticket) => {
     if (
-      ticket.destination == requirement.destination &&
-      ticket.source == requirement.source
+      ticket?.destination == requirement?.destination &&
+      ticket?.source == requirement?.source &&
+      ticket.direct == requirement.direct
     ) {
       return true;
     } else {

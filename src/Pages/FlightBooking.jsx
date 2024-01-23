@@ -2,7 +2,9 @@
 import { Box, Button, TextField } from "@mui/material";
 import { useState } from "react";
 import { useNavigate } from "react-router-dom";
-import { actionToCnfTkts } from "../redux/actions/actionsCreators";
+import {
+  actionToCnfTkts,
+} from "../redux/actions/actionsCreators";
 import { useDispatch } from "react-redux";
 
 function FlightBooking() {
@@ -13,7 +15,7 @@ function FlightBooking() {
   function handleConfirm() {
     const selectedTckt = JSON.parse(localStorage.getItem("selectedTckt"));
     const preparedtckt = { ...selectedTckt, ...cnfInfo };
-    console.log(preparedtckt)
+    console.log(preparedtckt);
     dispatch(actionToCnfTkts(preparedtckt));
     localStorage.removeItem("selectedTckt");
     setCnfInfo({});
